@@ -8,14 +8,21 @@ The multiplex plugin needs the following three things to operate:
 2. [Client presentations](#client-presentation) that follow the master
 3. [Socket.io server](#socketio-server) to broadcast events from the master to the clients
 
-#### Master presentation
+## Getting Started
+
+1. Open the command line and navigate to your reveal.js folder
+1. `npm install reveal-multiplex`
+1. `npm explore reveal-multiplex start`
+1. Follow the instructions below to set up your master and client
+
+## Master Presentation
 
 Served from a static file server accessible (preferably) only to the presenter. This need only be on your (the presenter's) computer. (It's safer to run the master presentation from your own computer, so if the venue's Internet goes down it doesn't stop the show.) An example would be to execute the following commands in the directory of your master presentation:
 
 1. `npm install node-static`
 2. `static`
 
-If you want to use the speaker notes plugin with your master presentation then make sure you have the speaker notes plugin configured correctly along with the configuration shown below, then execute `node plugin/notes-server` in the directory of your master presentation. The configuration below will cause it to connect to the socket.io server as a master, as well as launch your speaker-notes/static-file server.
+If you want to use the speaker notes plugin with your master presentation then make sure you have the speaker notes plugin configured correctly along with the configuration shown below, then execute `node node_modules/reveal-notes-server` in the directory of your master presentation. The configuration below will cause it to connect to the socket.io server as a master, as well as launch your speaker-notes/static-file server.
 
 You can then access your master presentation at `http://localhost:1947`
 
@@ -23,8 +30,6 @@ Example configuration:
 
 ```javascript
 Reveal.initialize({
-  // other options...
-
   multiplex: {
     // Example values. To generate your own, see the socket.io server instructions.
     secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
@@ -35,17 +40,15 @@ Reveal.initialize({
   // Don't forget to add the dependencies
   dependencies: [
     { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js', async: true },
-    { src: 'plugin/multiplex/master.js', async: true },
+    { src: 'node_modules/reveal-multiplex/master.js', async: true },
 
     // and if you want speaker notes
-    { src: 'plugin/notes-server/client.js', async: true }
-
-    // other dependencies...
+    { src: 'node_modules/reveal-notes-server/client.js', async: true }
   ]
 });
 ```
 
-#### Client presentation
+## Client Presentation
 
 Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via `https://example.com/path/to/presentation/client/index.html`, with the configuration below causing them to connect to the socket.io server as clients.
 
@@ -53,8 +56,6 @@ Example configuration:
 
 ```javascript
 Reveal.initialize({
-  // other options...
-
   multiplex: {
     // Example values. To generate your own, see the socket.io server instructions.
     secret: null, // null so the clients do not have control of the master presentation
@@ -65,19 +66,17 @@ Reveal.initialize({
   // Don't forget to add the dependencies
   dependencies: [
     { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js', async: true },
-    { src: 'plugin/multiplex/client.js', async: true }
-
-    // other dependencies...
+    { src: 'node_modules/reveal-multiplex/client.js', async: true }
   ]
 });
 ```
 
-#### Socket.io server
+## Socket.io Server
 
 Server that receives the `slideChanged` events from the master presentation and broadcasts them out to the connected client presentations. This needs to be publicly accessible. You can run your own socket.io server with the commands:
 
 1. `npm install`
-2. `node plugin/multiplex`
+2. `node node_modules/reveal-multiplex`
 
 Or you can use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
@@ -85,9 +84,9 @@ You'll need to generate a unique secret and token pair for your master and clien
 
 You are very welcome to point your presentations at the Socket.io server running at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), but availability and stability are not guaranteed.
 
-For anything mission critical I recommend you run your own server. The easiest way to do this is by installing [now](https://zeit.co/now). With that installed, deploying your own Multiplex server is as easy running the following command from the reveal.js folder: `now plugin/multiplex`.
+For anything mission critical I recommend you run your own server. The easiest way to do this is by installing [now](https://zeit.co/now). With that installed, deploying your own Multiplex server is as easy running the following command from the reveal.js folder: `now node_modules/reveal-multiplex`.
 
-##### socket.io server as file static server
+### socket.io server as file static server
 
 The socket.io server can play the role of static file server for your client presentation, as in the example at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/). (Open [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/) in two browsers. Navigate through the slides on one, and the other will update to match.)
 
@@ -95,8 +94,6 @@ Example configuration:
 
 ```javascript
 Reveal.initialize({
-  // other options...
-
   multiplex: {
     // Example values. To generate your own, see the socket.io server instructions.
     secret: null, // null so the clients do not have control of the master presentation
@@ -107,9 +104,7 @@ Reveal.initialize({
   // Don't forget to add the dependencies
   dependencies: [
     { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js', async: true },
-    { src: 'plugin/multiplex/client.js', async: true }
-
-    // other dependencies...
+    { src: 'node_modules/reveal-multiplex/client.js', async: true }
   ]
 ```
 
@@ -119,8 +114,6 @@ Example configuration:
 
 ```javascript
 Reveal.initialize({
-  // other options...
-
   multiplex: {
     // Example values. To generate your own, see the socket.io server instructions.
     secret: '13652805320794272084', // Obtained from the socket.io server. Gives this (the master) control of the presentation
@@ -131,10 +124,8 @@ Reveal.initialize({
   // Don't forget to add the dependencies
   dependencies: [
     { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js', async: true },
-    { src: 'plugin/multiplex/master.js', async: true },
-    { src: 'plugin/multiplex/client.js', async: true }
-
-    // other dependencies...
+    { src: 'node_modules/reveal-multiplex/master.js', async: true },
+    { src: 'node_modules/reveal-multiplex/client.js', async: true }
   ]
 });
 ```
