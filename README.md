@@ -10,9 +10,9 @@ The multiplex plugin needs the following three things to operate:
 
 ## Getting Started
 
-1. Open the command line and navigate to your reveal.js folder
+1. Navigate to your reveal.js folder
 1. `npm install reveal-multiplex`
-1. `npm explore reveal-multiplex start`
+1. `node node_modules/reveal-multiplex`
 1. Follow the instructions below to set up your master and client
 
 ## Master Presentation
@@ -24,7 +24,7 @@ Served from a static file server accessible (preferably) only to the presenter. 
 
 If you want to use the speaker notes plugin with your master presentation then make sure you have the speaker notes plugin configured correctly along with the configuration shown below, then execute `node node_modules/reveal-notes-server` in the directory of your master presentation. The configuration below will cause it to connect to the socket.io server as a master, as well as launch your speaker-notes/static-file server.
 
-You can then access your master presentation at `http://localhost:1947`
+You can then access your master presentation at `http://localhost:1948`
 
 Example configuration:
 
@@ -73,10 +73,7 @@ Reveal.initialize({
 
 ## Socket.io Server
 
-Server that receives the `slideChanged` events from the master presentation and broadcasts them out to the connected client presentations. This needs to be publicly accessible. You can run your own socket.io server with the commands:
-
-1. `npm install`
-2. `node node_modules/reveal-multiplex`
+Server that receives the `slideChanged` events from the master presentation and broadcasts them out to the connected client presentations. This needs to be publicly accessible. You can run your own socket.io server with `node node_modules/reveal-multiplex`.
 
 Or you can use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
