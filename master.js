@@ -7,12 +7,13 @@
 
 	var socket = io.connect( multiplex.url );
 
-	function post() {
+	function post( evt ) {
 
 		var messageData = {
 			state: Reveal.getState(),
 			secret: multiplex.secret,
-			socketId: multiplex.id
+			socketId: multiplex.id,
+			content: (evt || {}).content
 		};
 
 		socket.emit( 'multiplex-statechanged', messageData );
@@ -30,5 +31,6 @@
 	Reveal.on( 'overviewshown', post );
 	Reveal.on( 'paused', post );
 	Reveal.on( 'resumed', post );
+	document.addEventListener( 'send', post ); // broadcast custom events sent by other plugins
 
 }());
