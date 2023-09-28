@@ -1,27 +1,40 @@
 let http        = require('http');
 let express		= require('express');
+let cors 		= require('cors')
 let fs			= require('fs');
 let io			= require('socket.io');
 let crypto		= require('crypto');
 
 let app       	= express();
 let staticDir 	= express.static;
+
+app.use(cors()); // enable cors for all origins
+
 let server    	= http.createServer(app);
 
-io = io(server);
+let socketsIO = io(server, {
+	cors: {
+	  origin: "*",
+	  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+	}
+  });
 
 let opts = {
 	port: process.env.PORT || 1948,
 	baseDir : process.cwd()
 };
 
-io.on( 'connection', socket => {
+socketsIO.on( 'connection', socket => {
+	console.debug('Connection opened');
 	socket.on('multiplex-statechanged', data => {
 		if (typeof data.secret == 'undefined' || data.secret == null || data.secret === '') return;
 		if (createHash(data.secret) === data.socketId) {
+			console.debug('Broadcasting state change');
 			data.secret = null;
 			socket.broadcast.emit(data.socketId, data);
-		};
+		} else {
+			console.warn('Secret and socketId do not match');
+		}
 	});
 });
 
@@ -41,22 +54,16 @@ app.get("/", ( req, res ) => {
 });
 
 app.get("/token", ( req, res ) => {
-	let ts = new Date().getTime();
-	let rand = Math.floor(Math.random()*9999999);
-	let secret = ts.toString() + rand.toString();
+	let secret = crypto.randomBytes(16).toString('hex');
 	res.send({secret: secret, socketId: createHash(secret)});
 });
 
-let createHash = secret => {
-	let cipher = crypto.createCipher('blowfish', secret);
-	return cipher.final('hex');
+let createHash = (secret) => {
+	let hash = crypto.createHash('sha256', secret);
+	return hash.digest('hex');
 };
 
-// Actually listen
+// Open the listening port
 server.listen( opts.port || null );
 
-let brown = '\033[33m',
-	green = '\033[32m',
-	reset = '\033[0m';
-
-console.log( brown + "reveal.js:" + reset + " Multiplex running on port " + green + opts.port + reset );
+console.log(`reveal.js: Multiplex running on port: ${opts.port}`);

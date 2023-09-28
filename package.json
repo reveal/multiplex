@@ -10,9 +10,10 @@
     "node": ">=9.0.0"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "~4.17.1",
     "mustache": "~4.0.0",
-    "socket.io": "~2.3.0"
+    "socket.io": "^2.5.0"
   },
   "license": "MIT"
 }
