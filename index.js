@@ -59,7 +59,7 @@ app.get("/token", ( req, res ) => {
 });
 
 let createHash = (secret) => {
-	let hash = crypto.createHash('sha256', secret);
+	let hash = crypto.createHash('sha256').update(secret);
 	return hash.digest('hex');
 };
 
